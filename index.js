@@ -6,7 +6,7 @@ const { nanoid } = require("nanoid");
 
 const httpServer = createServer((req, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Привет, мир!\n');
+    res.end(JSON.stringify(req.body));
 });
 const io = new Server(httpServer, {
     cors: {

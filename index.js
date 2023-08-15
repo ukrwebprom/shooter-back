@@ -1,6 +1,7 @@
 const {Server} = require ('socket.io');
 const {createServer} = require('http');
 const getRandomPlace = require('./resources/places');
+const port = process.env.PORT || 8080;
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -14,4 +15,4 @@ io.on("connection", (socket) => {
     socket.on('move', m => console.log(m))
 })
 
-httpServer.listen(3001);
+httpServer.listen(port);

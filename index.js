@@ -25,7 +25,7 @@ const createNewPlayer = () => {
 
 io.on("connection", (socket) => {
 /*     const initData = getRandomPlace();*/
-    console.log('connected well', initData.id );
+    console.log('connected well');
     const playerData = {
         position: {x:0, y:0},
         id:nanoid()

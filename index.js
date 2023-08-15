@@ -12,6 +12,7 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
     console.log('connected well', getRandomPlace() );
+    socket.emit('init', getRandomPlace());
     socket.on('move', m => {
         socket.broadcast.emit('enemy-move', m);
     })

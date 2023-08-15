@@ -32,6 +32,7 @@ io.on("connection", (socket) => {
 
     socket.on('move', m => {
         socket.broadcast.emit('enemy-move', m);
+        console.log('player moved', m);
     })
 })
 

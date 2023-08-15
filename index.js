@@ -11,8 +11,9 @@ const io = new Server(httpServer, {
 })
 
 io.on("connection", (socket) => {
-    console.log('connected well', getRandomPlace() );
-    socket.emit('init', getRandomPlace());
+    const initData = getRandomPlace();
+    console.log('connected well', initData );
+    socket.emit('init', initData);
     socket.on('move', m => {
         socket.broadcast.emit('enemy-move', m);
     })

@@ -22,10 +22,14 @@ const createNewPlayer = () => {
 
 io.on("connection", (socket) => {
 /*     const initData = getRandomPlace();
-    console.log('connected well', initData.id );
-    socket.emit('init', initData); */
-    socket.broadcast.emit('newEnemy', createNewPlayer());
-    console.log('new player');
+    console.log('connected well', initData.id );*/
+    const playerData = {
+        position: {x:0, y:0},
+        id:nanoid()
+    }
+    socket.emit('init', playerData);
+    socket.broadcast.emit('newEnemy', playerData);
+
     socket.on('move', m => {
         socket.broadcast.emit('enemy-move', m);
     })

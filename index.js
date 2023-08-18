@@ -1,13 +1,21 @@
 const {Server} = require ('socket.io');
+const express = require("express");
+const cors = require("cors");
 const {createServer} = require('http');
 const getRandomPlace = require('./resources/places');
 const port = process.env.PORT || 8080;
 const { nanoid } = require("nanoid");
 
-const httpServer = createServer((req, res) => {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end(JSON.stringify(req.body));
-});
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.use((req, res) => {
+    res.status(404).json({ message: "Not found" });
+  });
+
+const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
         origin: '*'
@@ -38,5 +46,6 @@ io.on("connection", (socket) => {
         console.log('player moved', m);
     })
 })
+
 
 httpServer.listen(port);

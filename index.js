@@ -12,7 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use((req, res) => {
-    res.status(404).json({ message: "Not found" });
+    const mapID = req.query.mapID;
+    if(mapID) res.status(200).json(getRandomPlace());
+    else res.status(404).json({ message: "Not found" });
   });
 
 const httpServer = createServer(app);

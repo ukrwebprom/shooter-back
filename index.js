@@ -49,5 +49,7 @@ io.on("connection", (socket) => {
     })
 })
 
-
-httpServer.listen(port);
+app.listen(port, () => {
+    console.log(`Server running. Use our API on port: ${port}`);
+  });
+/* httpServer.listen(port); */

@@ -2,7 +2,7 @@ const {Server} = require ('socket.io');
 const express = require("express");
 const cors = require("cors");
 const {createServer} = require('http');
-const {getRandomPlace, getPlace} = require('./resources/places');
+const {getPlace} = require('./resources/places');
 const port = process.env.PORT || 8080;
 const { nanoid } = require("nanoid");
 
@@ -14,8 +14,8 @@ app.use(express.json());
 app.use("/map", (req, res) => {
     const mapID = req.query.mapID;
     console.log('requested map:', mapID);
-    if(mapID !== undefined) res.status(200).json(getPlace(mapID));
-    else res.status(200).json(getRandomPlace());
+    res.status(200).json(getPlace(mapID));
+/*     else res.status(200).json(getRandomPlace()); */
   });
 
 const httpServer = createServer(app);

@@ -4,13 +4,14 @@ const places = [
     {name:'storm shadow', map:stormShadow},
     {name:'desert rose', map:desertRose}
 ]
-const getRandomPlace = () => {
+/* const getRandomPlace = () => {
     return places[Math.floor(Math.random() * (places.length))];
-}
+} */
 const getPlace = (id) => {
-    return places[id];
+    const num = id? id : Math.floor(Math.random() * (places.length));
+    return places[num];
 }
 module.exports = {
-    getRandomPlace,
+/*     getRandomPlace, */
     getPlace
 };

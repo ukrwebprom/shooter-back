@@ -15,7 +15,7 @@ app.use("/map", (req, res) => {
     const mapID = req.query.mapID;
     console.log('requested map:', mapID);
     if(mapID) res.status(200).json(getPlace(mapID));
-    else res.status(404).json({ message: "Not found" });
+    else res.status(200).json(getRandomPlace());
   });
 
 const httpServer = createServer(app);

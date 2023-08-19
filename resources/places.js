@@ -5,7 +5,7 @@ const places = [
     {name:'desert rose', map:desertRose}
 ]
 const getRandomPlace = () => {
-    return places[Math.floor(Math.random() * (places.length + 1))];
+    return places[Math.floor(Math.random() * (places.length))];
 }
 const getPlace = (id) => {
     return places[id];

@@ -7,7 +7,7 @@ const places = [
 /* const getRandomPlace = () => {
     return places[Math.floor(Math.random() * (places.length))];
 } */
-const getPlace = (id) => {
+const getPlace = (id = null) => {
     const num = id? id : Math.floor(Math.random() * (places.length));
     return places[num];
 }

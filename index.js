@@ -13,8 +13,9 @@ app.use(express.json());
 
 app.use("/map", (req, res) => {
     const mapID = req.query.mapID;
-    console.log('requested map:', mapID);
-    res.status(200).json(getPlace(mapID));
+    const map = getPlace(mapID)
+    console.log('requested map:', mapID, map)
+    res.status(200).json(map);
 /*     else res.status(200).json(getRandomPlace()); */
   });
 

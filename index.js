@@ -12,11 +12,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/map", (req, res) => {
-    const mapID = req.query.mapID;
-    const map = getPlace(mapID)
-    console.log('requested map:', mapID, map)
+    const map = getPlace(req.query.mapID);
     res.status(200).json(map);
-/*     else res.status(200).json(getRandomPlace()); */
   });
 
 const httpServer = createServer(app);

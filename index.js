@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use((req, res) => {
+app.use("/map", (req, res) => {
     const mapID = req.query.mapID;
     console.log('requested map:', mapID);
     if(mapID) res.status(200).json(getPlace(mapID));

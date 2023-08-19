@@ -7,4 +7,10 @@ const places = [
 const getRandomPlace = () => {
     return places[Math.floor(Math.random() * (places.length + 1))];
 }
-module.exports = getRandomPlace;
+const getPlace = (id) => {
+    return places[id];
+}
+module.exports = {
+    getRandomPlace,
+    getPlace
+};

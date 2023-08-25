@@ -2,7 +2,7 @@ const {stormShadow, desertRose} = require('./maps');
 
 const places = [
     {name:'storm shadow', map:stormShadow, start:{x:1, y:12}},
-    {name:'desert rose', map:desertRose, start:{x:15, y:8}}
+    {name:'desert rose', map:desertRose, start:{x:150, y:80}}
 ]
 
 const getPlace = id => {

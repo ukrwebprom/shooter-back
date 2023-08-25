@@ -15,9 +15,7 @@ app.use(express.json());
 
 app.use("/map", (req, res) => {
     const map = getPlace(req.query.mapID);
-    const playerID = req.query.playerID;
     map.enemies = getPlayers(map.id);
-    
     res.status(200).json(map);
   });
 
@@ -29,13 +27,6 @@ const io = new Server(httpServer, {
 })
 
 
-const createNewPlayer = () => {
-    const playerData = {
-        position: {x:0, y:0},
-        id:nanoid()
-    }
-    return playerData;
-}
 const broadcast = (action, data, id, ownSocket) => {
     getPlayers(id).forEach(el => {
         const socketID = el.socket;
@@ -86,6 +77,11 @@ io.on("connection", (socket) => {
 
     socket.on('updatePosition', data => {
         updatePlayerPosition(data.playerId, data.position);
+    })
+
+    socket.on('getEnemyPositions', data => {
+        const positions = getPlayers(data.roomId);
+        socket.emit('update', positions);
     })
 })
 

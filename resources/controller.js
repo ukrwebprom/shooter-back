@@ -11,14 +11,16 @@ const getMap = async (req, res) => {
 
 const postMap = async (req, res) => {
     const empty = makeEmptyLand(50);
-    const newMap = await Map.create({...req.body, ground:empty});
+    const newMap = await Map.create({...req.body, ground:empty, walls:[]});
     
     res.status(200).json(newMap);
 }
 const putMap = async(req, res) => {
     const _id = req.body.id;
-    const data = req.body.map;
-    const newMap = await Map.findByIdAndUpdate(_id, {ground:data});
+    const ground = req.body.map;
+    const walls = req.body.walls;
+    console.log(walls);
+    const newMap = await Map.findByIdAndUpdate(_id, {ground:ground, walls:walls});
     res.status(200).json('ok');
 }
 const mapsList = async (req, res) => {

@@ -8,7 +8,11 @@ const mapSchema = new Schema(  {
     ground: {
         type: [[Number]],
         default:[]
-    }
+    },
+    walls: {
+      type: [Object],
+      default:[]
+    },
   }, {versionKey:false});
 
 mapSchema.post("save", (error, data, next) => {

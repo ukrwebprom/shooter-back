@@ -9,6 +9,14 @@ const getPlace = id => {
     const n = id? id : Math.floor(Math.random() * (places.length));
     return {...places[n], id:n};
 }
+const makeEmptyLand = n => {
+    const land = Array.from({ length: n }, () => 
+        Array.from({ length: n }, () => 0)
+    );
+    return land;
+}
+
 module.exports = {
-    getPlace
+    getPlace,
+    makeEmptyLand
 };

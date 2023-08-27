@@ -1,8 +1,10 @@
 const {Server} = require ('socket.io');
 const express = require("express");
 const cors = require("cors");
+const mongoose = require('mongoose');
+const router = require('./resources/router');
 const {createServer} = require('http');
-const {getPlace} = require('./resources/places');
+
 const {setPlayer, getPlayers, removePlayer, getPlayerData, getDataBySocketId, updatePlayerPosition} = require('./resources/players');
 
 const port = process.env.PORT || 8080;
@@ -13,11 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/map", (req, res) => {
-    const map = getPlace(req.query.mapID);
-    map.enemies = getPlayers(map.id);
-    res.status(200).json(map);
-  });
+app.use("/map", router);
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -84,6 +82,14 @@ io.on("connection", (socket) => {
         socket.emit('update', positions);
     })
 })
-
-httpServer.listen(port);
-console.log("ich bin server");
+mongoose.connect('mongodb+srv://Duca:Z6ioGxRuEdqioxOy@cluster0.h8c3xnw.mongodb.net/gamedata')
+.then(() => {
+  console.log("Database connection successful");
+  httpServer.listen(port);
+  console.log("ich bin server");
+})
+.catch ((err) => {
+  console.log(err.message);
+  process.exit(1);
+  }
+)

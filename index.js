@@ -2,20 +2,22 @@ const {Server} = require ('socket.io');
 const express = require("express");
 const cors = require("cors");
 const mongoose = require('mongoose');
-const router = require('./resources/router');
+const maprouter = require('./resources/maprouter');
+const roomsrouter = require('./resources/roomsrouter');
 const {createServer} = require('http');
 
-const {setPlayer, getPlayers, removePlayer, getPlayerData, getDataBySocketId, updatePlayerPosition} = require('./resources/players');
+const {addPlayer, removePlayer, findPlayerBySocketId, getPlayersExcept} = require('./resources/players');
 
 const port = process.env.PORT || 8080;
-const { nanoid } = require("nanoid");
+
 const connectedSockets = new Set();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/map", router);
+app.use("/map", maprouter);
+app.use("/rooms", roomsrouter);
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -40,47 +42,49 @@ io.on("connection", (socket) => {
     console.log('connected well');
     connectedSockets.add(socket);
     
+    socket.on('enter', data => {
+        console.log(data);
+        const {playerId, startPos, roomId} = data;
+        addPlayer({roomId, playerId, position:startPos, socket});
+        console.log('entered:', playerId);
+        getPlayersExcept(playerId).forEach(option => option.emit('newEnemy', {playerId, position:startPos}));
+    })
+
     socket.on('disconnect', () => {
-        const playerData = getDataBySocketId(socket.id);
+        const userDisconnected = findPlayerBySocketId(socket);
+        const coPlayers = removePlayer(userDisconnected);
+        if(coPlayers) coPlayers.forEach(option => option.socket.emit('removeEnemy', userDisconnected));
+
+/*         const playerData = getDataBySocketId(socket.id);
         broadcast('removeEnemy', playerData?.playerID, playerData?.fightRoom, socket.id);
         connectedSockets.delete(socket);
         removePlayer(socket.id);
         console.log('disconnected. live sockets:');
         for (const targetSocket of connectedSockets) {
             console.log(targetSocket.id);
-        }
+        } */
     });
-
-    socket.on('enter', data => {
-        const {playerId, roomId} = data;
-         setPlayer(playerId, roomId, socket.id);
-         broadcast('newEnemy', getPlayerData(playerId), roomId, socket.id);
-    })
 
     socket.on('move', data => {
         console.log(data);
-        const playerData = getDataBySocketId(socket.id);
-        const info = {
-            direction: data,
-            playerId: playerData?.playerID
-        }
-        broadcast('move', info, playerData?.fightRoom, socket.id);
+        const coPlayers = getPlayersExcept(data.playerId);
+        coPlayers.forEach(option => option.emit('move', data));
     })
 
-    socket.on('stop', () => {
+    socket.on('stop', (id) => {
         console.log('stop');
-        const playerData = getDataBySocketId(socket.id);
-        broadcast('stop', playerData?.playerID, playerData?.fightRoom, socket.id);
+        const coPlayers = getPlayersExcept(id);
+        coPlayers.forEach(option => option.emit('stop', id));
     })
 
-    socket.on('updatePosition', data => {
+/*     socket.on('updatePosition', data => {
         updatePlayerPosition(data.playerId, data.position);
     })
 
     socket.on('getEnemyPositions', data => {
         const positions = getPlayers(data.roomId);
         socket.emit('update', positions);
-    })
+    }) */
 })
 mongoose.connect('mongodb+srv://Duca:Z6ioGxRuEdqioxOy@cluster0.h8c3xnw.mongodb.net/gamedata')
 .then(() => {

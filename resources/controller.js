@@ -1,18 +1,28 @@
 const Map = require('./model');
-const {makeEmptyLand} = require('./places');
+const {getRoomExcept, getMapId} = require('./rooms');
+const {getPlayerInRoom} = require('./players');
 
 const getMap = async (req, res) => {
-    
     const mapID = req.query.id;
-    console.log(mapID);
     const map = await Map.find({_id:mapID});
-    res.status(200).json(map[0]);
+    const portals = map[0].walls.filter(option => option.tile === 1);
+    const rndPortal = Math.floor(Math.random() * (portals.length));
+    const start = {
+        x: portals[rndPortal].x,
+        y: portals[rndPortal].y,
+    }
+    const level = {...map[0]._doc, start};
+    res.status(200).json(level);
 }
-
+const makeEmptyLand = n => {
+    const land = []
+    for(let i=0; i<n; i++)
+        land.push(Array(n).fill(0))
+    return land;
+}
 const postMap = async (req, res) => {
     const empty = makeEmptyLand(50);
     const newMap = await Map.create({...req.body, ground:empty, walls:[]});
-    
     res.status(200).json(newMap);
 }
 const putMap = async(req, res) => {
@@ -27,9 +37,20 @@ const mapsList = async (req, res) => {
     const list = await Map.find({}, {ground:false});
     res.status(200).json(list);
 }
+
+const getRoom = async (req, res) => {
+    const roomID = req.query.id;
+    const newRoomData = await getRoomExcept(roomID);
+    const newRoom = {
+        ...newRoomData,
+        players: getPlayerInRoom(newRoomData.roomId).map(option => {return {playerId:option.playerId, position:option.position}})
+    }
+    res.status(200).json(newRoom);
+}
 module.exports = {
     getMap,
     postMap,
     putMap,
-    mapsList
+    mapsList,
+    getRoom
 }

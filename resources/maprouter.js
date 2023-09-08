@@ -1,21 +1,21 @@
 const express = require("express");
 const {postMap, mapsList, getMap, putMap} = require("./controller");
-const {getPlace} = require('./places');
+const {getPlace} = require('./rooms');
 const {getPlayers} = require('./players');
 
-const router = express.Router();
+const maprouter = express.Router();
 
-router.get("/", getMap);
+maprouter.get("/", getMap);
 /* (req, res) => {
     const map = getPlace(req.query.mapID);
     map.enemies = getPlayers(map.id);
     res.status(200).json(map);
   } */
 
-router.get('/list', mapsList);
-router.post("/", postMap);
-router.put("/", putMap);
+maprouter.get('/list', mapsList);
+maprouter.post("/", postMap);
+maprouter.put("/", putMap);
 
 
 
-module.exports = router;
+module.exports = maprouter;

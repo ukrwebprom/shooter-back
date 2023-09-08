@@ -1,7 +1,26 @@
-const { getPlace } = require("./places");
 const players = []
+//{roomId, playerId, position:startPos, socket}
 
-const getPlayers = placeID => {
+const addPlayer = player => {
+    players.push(player);
+}
+const removePlayer = player => {
+    playerIndex = players.findIndex(option => option.playerId === player);
+    players.splice(playerIndex, 1);
+    return players;
+}
+const getPlayerInRoom = roomID => {
+    return players.filter(option => option.roomId === roomID);
+}
+const findPlayerBySocketId = socket => {
+    const player = players.find(option => option.socket === socket);
+    return player?.playerId;
+}
+const getPlayersExcept = (playerId) => { // return array of sockets, incluning all players of the room excep one player
+    const player = players.find(option => option.playerId === playerId);
+    return players.filter(option => option.playerId !==playerId && option.roomId === player.roomId).map(opt => opt.socket);
+}
+/* const getPlayers = placeID => {
     return players.filter(player => player.fightRoom === placeID);
 }
 const getPlayerData = playerID => {
@@ -32,14 +51,19 @@ const setPlayer = (playerID, fightRoom, socket) => {
 const removePlayer = socket => {
     const playerIndex = players.findIndex(p => p.socket === socket);
     players.splice(playerIndex, 1);
-}
+} */
 
 
 module.exports = {
-    getPlayers,
+    addPlayer,
+    findPlayerBySocketId,
+    removePlayer,
+    getPlayerInRoom,
+    getPlayersExcept
+/*     getPlayers,
     setPlayer,
     removePlayer,
     getPlayerData,
     getDataBySocketId,
-    updatePlayerPosition
+    updatePlayerPosition */
 };

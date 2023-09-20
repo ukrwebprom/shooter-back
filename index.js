@@ -6,7 +6,7 @@ const maprouter = require('./resources/maprouter');
 const roomsrouter = require('./resources/roomsrouter');
 const {createServer} = require('http');
 
-const {addPlayer, removePlayer, findPlayerBySocketId, getPlayersExcept} = require('./resources/players');
+const {addPlayer, removePlayer, findPlayerBySocketId, getPlayersExcept, updatePlayerPosition} = require('./resources/players');
 
 const port = process.env.PORT || 8080;
 
@@ -27,17 +27,6 @@ const io = new Server(httpServer, {
 })
 
 
-const broadcast = (action, data, id, ownSocket) => {
-    getPlayers(id).forEach(el => {
-        const socketID = el.socket;
-        if(socketID !== ownSocket) return false;
-        for (const targetSocket of connectedSockets) {
-            if (targetSocket.id !== socketID) {
-                targetSocket.emit(action, data);
-            }
-        }
-    })
-}
 io.on("connection", (socket) => {
     console.log('connected well');
     connectedSockets.add(socket);
@@ -46,7 +35,6 @@ io.on("connection", (socket) => {
         console.log(data);
         const {playerId, startPos, roomId} = data;
         addPlayer({roomId, playerId, position:startPos, socket});
-        console.log('entered:', playerId);
         getPlayersExcept(playerId).forEach(option => option.emit('newEnemy', {playerId, position:startPos}));
     })
 
@@ -54,19 +42,10 @@ io.on("connection", (socket) => {
         const userDisconnected = findPlayerBySocketId(socket);
         const coPlayers = removePlayer(userDisconnected);
         if(coPlayers) coPlayers.forEach(option => option.socket.emit('removeEnemy', userDisconnected));
-
-/*         const playerData = getDataBySocketId(socket.id);
-        broadcast('removeEnemy', playerData?.playerID, playerData?.fightRoom, socket.id);
-        connectedSockets.delete(socket);
-        removePlayer(socket.id);
-        console.log('disconnected. live sockets:');
-        for (const targetSocket of connectedSockets) {
-            console.log(targetSocket.id);
-        } */
     });
 
     socket.on('move', data => {
-        console.log(data);
+        
         const coPlayers = getPlayersExcept(data.playerId);
         coPlayers.forEach(option => option.emit('move', data));
     })
@@ -77,11 +56,12 @@ io.on("connection", (socket) => {
         coPlayers.forEach(option => option.emit('stop', id));
     })
 
-/*     socket.on('updatePosition', data => {
+     socket.on('updatePosition', data => {
+        console.log(data);
         updatePlayerPosition(data.playerId, data.position);
     })
 
-    socket.on('getEnemyPositions', data => {
+ /*   socket.on('getEnemyPositions', data => {
         const positions = getPlayers(data.roomId);
         socket.emit('update', positions);
     }) */

@@ -20,6 +20,11 @@ const getPlayersExcept = (playerId) => { // return array of sockets, incluning a
     const player = players.find(option => option.playerId === playerId);
     return players.filter(option => option.playerId !==playerId && option.roomId === player.roomId).map(opt => opt.socket);
 }
+const updatePlayerPosition = (playerId, position) => {
+    const playerIndex = players.findIndex(option => option.playerId === playerId);
+    
+    players[playerIndex].position = {...position};
+}
 /* const getPlayers = placeID => {
     return players.filter(player => player.fightRoom === placeID);
 }
@@ -59,7 +64,8 @@ module.exports = {
     findPlayerBySocketId,
     removePlayer,
     getPlayerInRoom,
-    getPlayersExcept
+    getPlayersExcept,
+    updatePlayerPosition
 /*     getPlayers,
     setPlayer,
     removePlayer,
